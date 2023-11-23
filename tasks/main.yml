@@ -1,0 +1,70 @@
+---
+# tasks for classification-banner
+- name: Ensure classification banner package is installed
+  ansible.builtin.dnf:
+    name: "{{ cb_pkg }}"
+    state: present
+
+- name: Copy master "{{ banner_file }}" to configure login screen
+  ansible.builtin.copy:
+    src: "{{ banner_file }}"
+    dest: /etc/dconf/db/gdm.d/{{ banner_file }}
+    owner: root
+    group: root
+    mode: '0600'
+    force: false
+
+- name: Copy master "{{ banner_file }}" to configure login screen
+  ansible.builtin.copy:
+    src: "{{ banner_file }}"
+    dest: /etc/dconf/db/local.d/{{ banner_file }}
+    owner: root
+    group: root
+    mode: '0600'
+    force: false 
+
+- name: Modify gdm.d banner to display OPSEC message
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/gdm.d/{{ banner_file }}
+    regexp: '^message='
+    line: "{{ OPSEC_banner }}"
+
+- name: Modify user banner to reflect the level of the system
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/local.d/{{ banner_file }}
+    regexp: '^message='
+    line: "{{ classification_banner }}"
+
+- name: Disable bottom display banner for user banner
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/local.d/{{ banner_file }}
+    regexp: '^bottom-banner='
+    line: bottom-banner=false
+
+- name: Ensure banner color is set per declared variable in vars for login screen
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/gdm.d/{{ banner_file }}
+    regexp: '^background-color='
+    line: "{{ bg_color }}"
+
+- name: Ensure banner color is set per declared variable in vars for user banner
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/local.d/{{ banner_file }}
+    regexp: '^background-color='
+    line: "{{ bg_color }}"
+
+- name: Ensure font color is set per declared variable in vars for login screen
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/gdm.d/{{ banner_file }}
+    regexp: '^color='
+    line: "{{ font_color }}"
+
+- name: Ensure font color is set per declared variable in vars for user banner
+  ansible.builtin.lineinfile:
+    path: /etc/dconf/db/local.d/{{ banner_file }}
+    regexp: '^color='
+    line: "{{ font_color }}"                                                                                                                                      
+    
+- name: Issue dconf update command to confirm settings
+  ansible.builtin.command: dconf update
+    

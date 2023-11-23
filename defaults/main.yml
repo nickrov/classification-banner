@@ -1,0 +1,8 @@
+---
+# vars for classification-banner
+banner_file: 99-class-banner
+OPSEC_banner: "message='TOP SECRET//SAR-MULTIPLE PROGRAMS'"
+classification_banner: "message='TOP SECRET//SAR-MULTIPLE PROGRAMS"
+bg_color: "background-color='rgba(255,128,0,0.75)'"
+cb_pkg: gnome-shell-extension-classification-banner.noarch
+
